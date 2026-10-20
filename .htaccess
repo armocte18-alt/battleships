@@ -1,0 +1,19 @@
+# Battleships SIOS · acceso sin /public (Apache con mod_rewrite)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Nunca exponer archivos internos del proyecto.
+    RewriteRule ^(\.env.*|\.git.*|composer\.(json|lock)|artisan|app|bootstrap|config|database|resources|routes|storage|tests|vendor)(/.*)?$ - [F,L]
+
+    # Recursos estáticos (css, js, imágenes) desde public/.
+    RewriteRule ^public/ - [L]
+    RewriteRule ^(assets/.*|favicon\.ico|robots\.txt)$ public/$1 [L]
+
+    # Todo lo demás lo atiende Laravel.
+    RewriteRule ^index\.php$ - [L]
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+<IfModule !mod_rewrite.c>
+    ErrorDocument 404 "Activa mod_rewrite en Apache o abre el juego en /battle_ships/public"
+</IfModule>
