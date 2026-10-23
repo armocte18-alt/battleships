@@ -27,6 +27,16 @@ return [
             'accent' => '#ffd23d',
             'enabled' => true,
         ],
+        'minesweeper' => [
+            'name' => 'Buscaminas',
+            'tagline' => 'Lógica clásica',
+            'description' => 'Despeja el campo sin detonar ninguna mina. Tres niveles de dificultad y récords de tiempo.',
+            'route' => 'minesweeper',
+            'players' => '1 jugador',
+            'tags' => ['Lógica', 'Récords', 'Contrarreloj'],
+            'accent' => '#a78bfa',
+            'enabled' => true,
+        ],
         'tetris' => [
             'name' => 'Bloques',
             'tagline' => 'Puzzle',
@@ -46,6 +56,15 @@ return [
             'tags' => ['Arcade'],
             'accent' => '#3dffa0',
             'enabled' => false,
+        ],
+    ],
+
+    'minesweeper' => [
+        // filas, columnas, minas y tiempo mínimo creíble (ms) para aceptar un récord.
+        'levels' => [
+            'easy' => ['name' => 'Principiante', 'rows' => 9, 'cols' => 9, 'mines' => 10, 'min_ms' => 1000],
+            'medium' => ['name' => 'Intermedio', 'rows' => 16, 'cols' => 16, 'mines' => 40, 'min_ms' => 6000],
+            'hard' => ['name' => 'Experto', 'rows' => 16, 'cols' => 30, 'mines' => 99, 'min_ms' => 20000],
         ],
     ],
 

@@ -6,6 +6,7 @@ Sala de juegos para los usuarios de **SIOS**, hecha en Laravel 13. Al entrar, ca
 |---|---|---|
 | ⚓ **Battleships** | 1 o 2 jugadores (contra la CPU o contra un compañero), con chat | `/battleships` |
 | 🟡 **Pac-Man** | 1 jugador, salón de la fama con los mejores puntajes | `/pacman` |
+| 💣 **Buscaminas** | 1 jugador, 3 dificultades con récords de tiempo | `/buscaminas` |
 
 La sala (`/`) muestra las tarjetas de los juegos con tus estadísticas, los jugadores en línea (a los que puedes retar
 a Battleships con un clic) y un chat general. Los desafíos de Battleships te llegan estés donde estés.
@@ -21,6 +22,15 @@ a Battleships con un clic) y un chat general. Los desafíos de Battleships te ll
 - Frutas (🍒 100 → 🔑 5000), combos de fantasmas (200 → 1600), vida extra a los 10,000 puntos y niveles cada vez más rápidos.
 - Controles: flechas o WASD, <kbd>P</kbd> para pausar; en celular, deslizar el dedo o la cruceta en pantalla.
 - Al terminar se guarda el puntaje y se muestra tu lugar en el salón de la fama (el servidor rechaza puntajes imposibles).
+
+## 💣 Buscaminas
+
+- Estilo moderno: casillas de cristal con relieve, números de neón, banderas que ondean y minas que brillan.
+- Tres niveles: Principiante (9×9, 10 minas), Intermedio (16×16, 40) y Experto (30×16, 99; en celular se gira a lo alto).
+- El primer clic nunca es mina y siempre abre una zona; el despeje en cascada se anima desde donde hiciste clic.
+- Clic derecho o mantener presionado = bandera; clic sobre un número con sus banderas completas despeja alrededor;
+  botón ⛏/🚩 para alternar en pantallas táctiles; <kbd>R</kbd> reinicia.
+- Al perder, las minas detonan en cadena; al ganar, se guarda tu tiempo y ves tu lugar por dificultad.
 
 ## ⚓ Battleships
 
@@ -131,7 +141,7 @@ Estructura principal:
 - `app/Models/SiosUser.php` — usuarios de SIOS (conexión `sios`, solo lectura).
 - `config/arcade.php` — catálogo de juegos de la sala.
 - `app/Http/Controllers/HubController.php` / `PacmanController.php` — sala de juegos y puntajes de Pac-Man.
-- `public/assets/js/core.js` — sonido, partículas, barcos SVG, chat y desafíos · `hub.js` — la sala · `pacman.js` — Pac-Man · `game.js` — partida de Battleships · `lobby.js` — el puerto.
+- `public/assets/js/core.js` — sonido, partículas, barcos SVG, chat y desafíos · `hub.js` — la sala · `pacman.js` — Pac-Man · `minesweeper.js` — Buscaminas · `game.js` — partida de Battleships · `lobby.js` — el puerto.
 
 La comunicación en tiempo real se hace con consultas periódicas (cada ~1 s en partida), suficiente para la red de la
 oficina y sin instalar servidores extra.

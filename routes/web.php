@@ -5,6 +5,7 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\HubController;
 use App\Http\Controllers\LobbyController;
+use App\Http\Controllers\MinesweeperController;
 use App\Http\Controllers\PacmanController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +23,10 @@ Route::middleware('auth')->group(function () {
     // Pac-Man
     Route::get('/pacman', [PacmanController::class, 'index'])->name('pacman');
     Route::post('/pacman/scores', [PacmanController::class, 'store'])->name('pacman.scores');
+
+    // Buscaminas
+    Route::get('/buscaminas', [MinesweeperController::class, 'index'])->name('minesweeper');
+    Route::post('/buscaminas/scores', [MinesweeperController::class, 'store'])->name('minesweeper.scores');
 
     // Battleships
     Route::get('/battleships', [LobbyController::class, 'index'])->name('lobby');

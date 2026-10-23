@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Game;
+use App\Models\MinesweeperScore;
 use App\Models\PacmanScore;
 use App\Models\Presence;
 use Illuminate\Http\Request;
@@ -27,6 +28,10 @@ class HubController extends Controller
                 ['label' => 'Tu mejor', 'value' => number_format(PacmanScore::bestOf($me))],
                 ['label' => 'Récord', 'value' => $record ? number_format($record['score']) : '—', 'hint' => $record['name'] ?? null],
             ],
+            'minesweeper' => [
+                ['label' => 'Victorias', 'value' => MinesweeperScore::where('user_id', $me)->count()],
+                ['label' => 'Tu mejor · Intermedio', 'value' => $this->seconds(MinesweeperScore::bestOf($me, 'medium'))],
+            ],
         ];
 
         return view('hub', [
@@ -34,5 +39,10 @@ class HubController extends Controller
             'stats' => $stats,
             'user' => $request->user(),
         ]);
+    }
+
+    private function seconds(?int $ms): string
+    {
+        return $ms === null ? '—' : number_format($ms / 1000, 1).' s';
     }
 }

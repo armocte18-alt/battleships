@@ -37,6 +37,12 @@
                                 @for ($i = 0; $i < 7; $i++)<i></i>@endfor
                                 <span class="mini-ghost g1"></span><span class="mini-ghost g2"></span><span class="mini-ghost g3"></span>
                             </div>
+                        @elseif ($key === 'minesweeper')
+                            <div class="art-mines">
+                                @foreach (str_split('1 2F1  1F3F2 112 1  1   1 111 12F2 1F2  2F31 1  1 22    1111') as $c)
+                                    <span class="{{ $c === ' ' ? 'o' : ($c === 'F' ? 'f' : 'n n'.$c) }}">{{ $c === 'F' ? '' : trim($c) }}</span>
+                                @endforeach
+                            </div>
                         @else
                             <div class="art-soon">?</div>
                         @endif
