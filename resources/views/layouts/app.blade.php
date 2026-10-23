@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="bs-base" content="{{ url('/') }}">
     <meta name="bs-user" content="{{ auth()->id() }}">
-    <title>@yield('title', 'Battleships') · SIOS</title>
+    <title>@yield('title', 'Sala de juegos') · SIOS Arcade</title>
     <link rel="icon" type="image/svg+xml" href="{{ asset('assets/img/favicon.svg') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,10 +18,13 @@
 
     @auth
         <header class="topbar">
-            <a href="{{ route('lobby') }}" class="brand">
+            <a href="{{ route('hub') }}" class="brand" title="Sala de juegos">
                 @include('partials.logo')
-                <div class="brand-title">BATTLESHIPS<small>SIOS · BATALLA NAVAL</small></div>
+                <div class="brand-title">@yield('brand', 'SIOS ARCADE')<small>@yield('brand-sub', 'SALA DE JUEGOS')</small></div>
             </a>
+            @hasSection('brand')
+                <a href="{{ route('hub') }}" class="btn sm ghost nav-hub">🎮 Juegos</a>
+            @endif
             <div class="spacer"></div>
             @yield('topbar')
             <button class="icon-btn" id="sound-toggle" type="button" title="Sonido"></button>

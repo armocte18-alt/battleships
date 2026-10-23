@@ -28,7 +28,7 @@ class BattleshipsTest extends TestCase
     public function test_guest_is_redirected_to_login(): void
     {
         $this->get('/')->assertRedirect('/login');
-        $this->get('/login')->assertOk()->assertSee('BATTLESHIPS');
+        $this->get('/login')->assertOk()->assertSee('SIOS ARCADE');
     }
 
     public function test_sios_user_logs_in_with_username_or_email_and_password_is_not_rewritten(): void

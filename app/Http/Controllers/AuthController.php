@@ -48,7 +48,7 @@ class AuthController extends Controller
         RateLimiter::clear($key);
         $request->session()->regenerate();
 
-        return redirect()->intended(route('lobby'));
+        return redirect()->intended(route('hub'));
     }
 
     public function logout(Request $request)

@@ -20,8 +20,8 @@
             <rect x="240" y="50" width="12" height="28" fill="#c23a6f"/>
             <path d="M0 118 Q 50 108 100 118 T 200 118 T 300 118 T 400 118" stroke="#3ff2ff" stroke-width="3" fill="none" opacity=".7"/>
         </svg>
-        <h1 class="login-title">BATTLESHIPS</h1>
-        <p class="login-sub">Batalla naval · SIOS</p>
+        <h1 class="login-title">SIOS ARCADE</h1>
+        <p class="login-sub">Sala de juegos · Battleships · Pac-Man</p>
 
         @if ($errors->any())
             <div class="error-box">{{ $errors->first() }}</div>
@@ -37,7 +37,7 @@
                 <label for="password">Contraseña</label>
                 <input class="input" id="password" type="password" name="password" required autocomplete="current-password">
             </div>
-            <button class="btn fire big" type="submit" style="width:100%">⚓ Zarpar</button>
+            <button class="btn fire big" type="submit" style="width:100%">🎮 Entrar a jugar</button>
         </form>
         <p class="login-foot">Usa las mismas credenciales con las que entras a SIOS.</p>
     </div>

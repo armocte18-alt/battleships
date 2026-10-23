@@ -7,7 +7,6 @@
     $('#hero-ship').innerHTML = BS.shipSVG('battleship', 4);
 
     const chat = BS.chat($('#lobby-chat'));
-    const shownInvites = new Map();
 
     $('#cpu-form').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -49,30 +48,6 @@
         return String(name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join('').toUpperCase();
     }
 
-    function renderInvites(list) {
-        const ids = new Set(list.map((i) => i.id));
-        for (const [id, el] of shownInvites) if (!ids.has(id)) { el.close(); shownInvites.delete(id); }
-        list.forEach((inv) => {
-            if (shownInvites.has(inv.id)) return;
-            BS.sfx.alarm();
-            const el = BS.toast(`
-                <div class="toast-title">⚔ ¡Desafío entrante!</div>
-                <div><b>${BS.esc(inv.from)}</b> te reta a una batalla naval.</div>
-                <div class="actions">
-                    <button class="btn sm green" data-act="accept">Aceptar</button>
-                    <button class="btn sm ghost" data-act="decline">Rechazar</button>
-                </div>`, { type: 'invite', timeout: 0 });
-            el.querySelector('[data-act=accept]').addEventListener('click', async () => {
-                try { const r = await BS.api('POST', `/games/${inv.id}/accept`); location.href = r.url; } catch (err) { BS.error(err); el.close(); }
-            });
-            el.querySelector('[data-act=decline]').addEventListener('click', async () => {
-                el.close(); shownInvites.delete(inv.id);
-                try { await BS.api('POST', `/games/${inv.id}/decline`); } catch (err) { BS.error(err); }
-            });
-            shownInvites.set(inv.id, el);
-        });
-    }
-
     function renderActive(list) {
         $('#active-games-wrap').hidden = !list.length;
         $('#active-games').innerHTML = list.map((g) => `
@@ -99,7 +74,7 @@
         try {
             const d = await BS.api('GET', `/lobby/poll?chat_after=${chat.lastId}`);
             renderPlayers(d.online);
-            renderInvites(d.invites);
+            BS.showInvites(d.invites);
             renderActive(d.active);
             renderRanking(d.ranking, d.my_stats);
             chat.push(d.chat);

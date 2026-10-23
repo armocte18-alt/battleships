@@ -3,7 +3,9 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\GameController;
+use App\Http\Controllers\HubController;
 use App\Http\Controllers\LobbyController;
+use App\Http\Controllers\PacmanController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -14,7 +16,15 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    Route::get('/', [LobbyController::class, 'index'])->name('lobby');
+    // Sala de juegos
+    Route::get('/', [HubController::class, 'index'])->name('hub');
+
+    // Pac-Man
+    Route::get('/pacman', [PacmanController::class, 'index'])->name('pacman');
+    Route::post('/pacman/scores', [PacmanController::class, 'store'])->name('pacman.scores');
+
+    // Battleships
+    Route::get('/battleships', [LobbyController::class, 'index'])->name('lobby');
     Route::get('/lobby/poll', [LobbyController::class, 'poll'])->name('lobby.poll');
 
     Route::post('/chat', [ChatController::class, 'store'])->name('chat.store');

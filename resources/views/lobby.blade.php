@@ -2,6 +2,9 @@
 
 @section('title', 'Puerto')
 
+@section('brand', 'BATTLESHIPS')
+@section('brand-sub', 'SIOS · BATALLA NAVAL')
+
 @section('content')
 <main class="lobby">
     <div class="lobby-main">

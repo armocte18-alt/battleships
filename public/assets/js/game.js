@@ -146,14 +146,14 @@
                 <h2 style="font-size:30px">Desafío enviado</h2>
                 <p>Esperando a que <b>${BS.esc(rival)}</b> acepte la batalla…<br><span id="countdown"></span></p>
                 <div class="actions"><button class="btn ghost" id="btn-cancel">Cancelar desafío</button></div></section>`;
-            $('#btn-cancel').onclick = async () => { await BS.api('POST', `/games/${S.id}/decline`).catch(BS.error); location.href = BS.base + '/'; };
+            $('#btn-cancel').onclick = async () => { await BS.api('POST', `/games/${S.id}/decline`).catch(BS.error); location.href = BS.base + '/battleships'; };
         } else {
             stage.innerHTML = `<section class="panel modal" style="margin:30px auto">
                 <div class="medal">⚔</div><h2 style="font-size:30px">¡Te desafían!</h2>
                 <p><b>${BS.esc(rival)}</b> quiere enfrentarse a ti en batalla naval.<br><span id="countdown"></span></p>
                 <div class="actions"><button class="btn green big pulse" id="btn-accept">Aceptar</button><button class="btn ghost" id="btn-decline">Rechazar</button></div></section>`;
             $('#btn-accept').onclick = async () => { try { apply(await BS.api('POST', `/games/${S.id}/accept`).then(() => BS.api('GET', `/games/${S.id}/state`))); } catch (e) { BS.error(e); } };
-            $('#btn-decline').onclick = async () => { await BS.api('POST', `/games/${S.id}/decline`).catch(BS.error); location.href = BS.base + '/'; };
+            $('#btn-decline').onclick = async () => { await BS.api('POST', `/games/${S.id}/decline`).catch(BS.error); location.href = BS.base + '/battleships'; };
         }
         tickCountdown();
     }
@@ -168,7 +168,7 @@
         if (view === 'closed') return;
         view = 'closed';
         stage.innerHTML = `<section class="panel modal" style="margin:30px auto"><div class="medal">🌊</div><h2 style="font-size:30px">${BS.esc(title)}</h2>
-            <p>${BS.esc(text)}</p><div class="actions"><a class="btn" href="${BS.base}/">Volver al puerto</a></div></section>`;
+            <p>${BS.esc(text)}</p><div class="actions"><a class="btn" href="${BS.base}/battleships">Volver al puerto</a></div></section>`;
     }
 
     /* ---------------- Despliegue de flota ---------------- */
@@ -470,7 +470,7 @@
                 <button class="btn fire" id="btn-rematch">⚔ Revancha</button>
                 <a class="btn" id="btn-accept-rematch" hidden>✅ Aceptar revancha</a>
                 <button class="btn ghost" id="btn-board">Ver tableros</button>
-                <a class="btn ghost" href="${BS.base}/">⚓ Puerto</a>
+                <a class="btn ghost" href="${BS.base}/battleships">⚓ Puerto</a>
             </div></div>`;
         document.body.appendChild(back);
         $('#btn-board', back).onclick = () => back.remove();

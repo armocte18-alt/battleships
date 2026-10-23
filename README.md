@@ -1,6 +1,28 @@
-# ⚓ Battleships · SIOS
+# 🎮 SIOS Arcade · Sala de juegos
 
-Batalla naval para los usuarios de **SIOS**, hecha en Laravel 13.
+Sala de juegos para los usuarios de **SIOS**, hecha en Laravel 13. Al entrar, cada usuario elige el juego:
+
+| Juego | Modo | Ruta |
+|---|---|---|
+| ⚓ **Battleships** | 1 o 2 jugadores (contra la CPU o contra un compañero), con chat | `/battleships` |
+| 🟡 **Pac-Man** | 1 jugador, salón de la fama con los mejores puntajes | `/pacman` |
+
+La sala (`/`) muestra las tarjetas de los juegos con tus estadísticas, los jugadores en línea (a los que puedes retar
+a Battleships con un clic) y un chat general. Los desafíos de Battleships te llegan estés donde estés.
+
+**Agregar un juego nuevo:** se registra en `config/arcade.php` (nombre, descripción, color, ruta). Con
+`'enabled' => false` aparece como *Próximamente*.
+
+## 🟡 Pac-Man
+
+- Laberinto clásico de 28×31 con paredes de neón (cambian de color en cada nivel) y efecto de pantalla CRT.
+- Los 4 fantasmas con su personalidad: Rojo persigue, Rosa embosca, Cian trabaja en equipo con Rojo y Naranja se acerca y huye.
+  Alternan entre dispersión y persecución, se vuelven azules con las píldoras de poder y regresan a casa como ojos.
+- Frutas (🍒 100 → 🔑 5000), combos de fantasmas (200 → 1600), vida extra a los 10,000 puntos y niveles cada vez más rápidos.
+- Controles: flechas o WASD, <kbd>P</kbd> para pausar; en celular, deslizar el dedo o la cruceta en pantalla.
+- Al terminar se guarda el puntaje y se muestra tu lugar en el salón de la fama (el servidor rechaza puntajes imposibles).
+
+## ⚓ Battleships
 
 - 🔐 Inicio de sesión con el **usuario (o correo) y contraseña de SIOS** — no hay que crear cuentas.
 - 🤖 **Contra la CPU** con 3 dificultades: *Recluta*, *Capitán* y *Almirante* (este último calcula probabilidades).
@@ -71,7 +93,7 @@ No necesita Node, npm, Vite, websockets ni colas: todo el CSS/JS ya está listo 
    php artisan view:cache
    ```
 
-5. **Abrir** `http://localhost/battle_ships` (o con la IP del servidor desde las otras PCs de la oficina).
+5. **Abrir** `http://localhost/battle_ships` (abre la Sala de juegos) (o con la IP del servidor desde las otras PCs de la oficina).
 
    El `.htaccess` de la raíz manda todo a `public/`, así que no hace falta escribir `/public`
    (y bloquea el acceso a `.env`, `vendor`, `storage`, etc.).
@@ -107,7 +129,9 @@ Estructura principal:
 - `app/Services/CpuPlayer.php` — IA de la CPU (aleatoria, caza y blanco, mapa de probabilidad).
 - `app/Services/Fleet.php` — flota, validación y colocación aleatoria.
 - `app/Models/SiosUser.php` — usuarios de SIOS (conexión `sios`, solo lectura).
-- `public/assets/js/core.js` — sonido, partículas, barcos SVG y chat · `game.js` — la partida · `lobby.js` — el puerto.
+- `config/arcade.php` — catálogo de juegos de la sala.
+- `app/Http/Controllers/HubController.php` / `PacmanController.php` — sala de juegos y puntajes de Pac-Man.
+- `public/assets/js/core.js` — sonido, partículas, barcos SVG, chat y desafíos · `hub.js` — la sala · `pacman.js` — Pac-Man · `game.js` — partida de Battleships · `lobby.js` — el puerto.
 
 La comunicación en tiempo real se hace con consultas periódicas (cada ~1 s en partida), suficiente para la red de la
 oficina y sin instalar servidores extra.

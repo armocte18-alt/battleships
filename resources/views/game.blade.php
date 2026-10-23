@@ -6,6 +6,9 @@
     <a href="{{ route('lobby') }}" class="btn sm ghost">⚓ Puerto</a>
 @endsection
 
+@section('brand', 'BATTLESHIPS')
+@section('brand-sub', 'SIOS · BATALLA NAVAL')
+
 @section('content')
 <main class="game">
     <div class="game-main">

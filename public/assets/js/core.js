@@ -97,6 +97,8 @@
     }
 
     sfx.isMuted = () => muted;
+    sfx.tone = tone;
+    sfx.ctx = ac;
     sfx.toggle = () => { muted = !muted; try { localStorage.setItem('bs-muted', muted ? '1' : '0'); } catch (e) { /* */ } return muted; };
 
     sfx.launch = () => {
@@ -323,6 +325,32 @@
             push(list) { (list || []).forEach((m) => append(m, { silent: first })); first = false; },
             system,
         };
+    };
+
+    /* ---------------- Desafíos de Battleships entrantes (en cualquier página) ---------------- */
+    const shownInvites = new Map();
+    BS.showInvites = function (list) {
+        const ids = new Set(list.map((i) => i.id));
+        for (const [id, el] of shownInvites) if (!ids.has(id)) { el.close(); shownInvites.delete(id); }
+        list.forEach((inv) => {
+            if (shownInvites.has(inv.id)) return;
+            sfx.alarm();
+            const el = BS.toast(`
+                <div class="toast-title">⚔ ¡Desafío entrante!</div>
+                <div><b>${BS.esc(inv.from)}</b> te reta a una batalla naval.</div>
+                <div class="actions">
+                    <button class="btn sm green" data-act="accept">Aceptar</button>
+                    <button class="btn sm ghost" data-act="decline">Rechazar</button>
+                </div>`, { type: 'invite', timeout: 0 });
+            el.querySelector('[data-act=accept]').addEventListener('click', async () => {
+                try { const r = await BS.api('POST', `/games/${inv.id}/accept`); location.href = r.url; } catch (err) { BS.error(err); el.close(); }
+            });
+            el.querySelector('[data-act=decline]').addEventListener('click', async () => {
+                el.close(); shownInvites.delete(inv.id);
+                try { await BS.api('POST', `/games/${inv.id}/decline`); } catch (err) { BS.error(err); }
+            });
+            shownInvites.set(inv.id, el);
+        });
     };
 
     BS.avatar = function (name, initials, url, extra = '') {
