@@ -31,7 +31,7 @@
             <div class="user-chip">
                 <div class="avatar">
                     @if (auth()->user()->avatarUrl())
-                        <img src="{{ auth()->user()->avatarUrl() }}" alt="" onerror="this.parentNode.textContent='{{ auth()->user()->initials() }}'">
+                        <img src="{{ auth()->user()->avatarUrl() }}" alt="" data-fallback="{{ auth()->user()->initials() }}">
                     @else
                         {{ auth()->user()->initials() }}
                     @endif

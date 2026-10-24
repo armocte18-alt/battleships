@@ -354,8 +354,18 @@
     };
 
     BS.avatar = function (name, initials, url, extra = '') {
-        return `<div class="avatar ${extra}">${url ? `<img src="${BS.esc(url)}" alt="" onerror="this.remove()">` : ''}${url ? '' : BS.esc(initials || '?')}</div>`;
+        return `<div class="avatar ${extra}">${url ? `<img src="${BS.esc(url)}" alt="" data-fallback="${BS.esc(initials || '?')}">` : ''}${url ? '' : BS.esc(initials || '?')}</div>`;
     };
+
+    /* Si un avatar no carga, muestra las iniciales (sin manejadores en línea, por la CSP). */
+    document.addEventListener('error', (e) => {
+        const img = e.target;
+        if (img instanceof HTMLImageElement && img.dataset.fallback !== undefined) {
+            const box = img.parentNode;
+            img.remove();
+            if (box) box.textContent = img.dataset.fallback;
+        }
+    }, true);
 
     /* ---------------- Botón de sonido ---------------- */
     document.addEventListener('DOMContentLoaded', () => {

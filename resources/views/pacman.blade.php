@@ -56,7 +56,7 @@
 @endsection
 
 @push('scripts')
-    <script>
+    <script nonce="{{ $cspNonce }}">
         window.PAC = {
             best: {{ $best }},
             leaderboard: @json($leaderboard),

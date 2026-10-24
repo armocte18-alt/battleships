@@ -74,8 +74,8 @@ return [
      * max_per_second limita puntajes imposibles según el tiempo jugado.
      */
     'scores' => [
-        'asteroids' => ['modes' => ['classic' => 'Clásico'], 'max_per_second' => 600, 'max' => 9999990],
-        'snake' => ['modes' => ['classic' => 'Clásico', 'wrap' => 'Sin bordes'], 'max_per_second' => 120, 'max' => 999990],
+        'asteroids' => ['modes' => ['classic' => 'Clásico'], 'max_per_second' => 600, 'max' => 9999990, 'meta' => ['wave', 'players']],
+        'snake' => ['modes' => ['classic' => 'Clásico', 'wrap' => 'Sin bordes'], 'max_per_second' => 120, 'max' => 999990, 'meta' => ['length']],
     ],
 
     // Salas de Asteroides

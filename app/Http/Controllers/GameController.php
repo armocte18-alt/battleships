@@ -58,8 +58,9 @@ class GameController extends Controller
         $data = $request->validate(['user_id' => ['required', 'integer']]);
         $rival = SiosUser::find($data['user_id']);
 
-        if (! $rival || (int) $rival->getKey() === (int) $me->getKey()) {
-            throw ValidationException::withMessages(['user_id' => 'Jugador no válido.']);
+        // Solo se puede retar a jugadores conectados (evita enumerar usuarios de SIOS por id).
+        if (! $rival || (int) $rival->getKey() === (int) $me->getKey() || ! Presence::isOnline((int) $rival->getKey(), 120)) {
+            throw ValidationException::withMessages(['user_id' => 'Ese jugador no está conectado.']);
         }
 
         // Si el rival ya me había invitado, acepto directamente esa invitación.

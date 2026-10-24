@@ -85,6 +85,9 @@ class BattleshipsTest extends TestCase
         $ana = $this->siosUser('ana');
         $beto = $this->siosUser('beto');
 
+        // Solo se puede retar a jugadores conectados.
+        $this->actingAs($ana)->postJson('/games/invite', ['user_id' => $beto->id])->assertStatus(422);
+        $this->actingAs($beto)->getJson('/lobby/poll')->assertOk();
         $this->actingAs($ana)->postJson('/games/invite', ['user_id' => $beto->id])->assertOk();
         $game = Game::firstOrFail();
 

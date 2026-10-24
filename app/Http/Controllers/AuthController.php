@@ -23,18 +23,23 @@ class AuthController extends Controller
             'password' => ['required', 'string'],
         ], [], ['login' => 'usuario', 'password' => 'contraseña']);
 
+        // Límite por usuario+IP (adivinar una contraseña) y por IP (probar muchos usuarios).
         $key = 'login:'.Str::lower($data['login']).'|'.$request->ip();
-        if (RateLimiter::tooManyAttempts($key, 5)) {
-            throw ValidationException::withMessages([
-                'login' => 'Demasiados intentos. Intenta de nuevo en '.RateLimiter::availableIn($key).' segundos.',
-            ]);
+        $ipKey = 'login-ip:'.$request->ip();
+        foreach ([[$key, 5], [$ipKey, 20]] as [$k, $max]) {
+            if (RateLimiter::tooManyAttempts($k, $max)) {
+                throw ValidationException::withMessages([
+                    'login' => 'Demasiados intentos. Intenta de nuevo en '.RateLimiter::availableIn($k).' segundos.',
+                ]);
+            }
         }
 
         // Se puede entrar con el usuario o con el correo de SIOS.
         $field = str_contains($data['login'], '@') ? 'email' : 'username';
 
         if (! Auth::attempt([$field => $data['login'], 'password' => $data['password']])) {
-            RateLimiter::hit($key);
+            RateLimiter::hit($key, 300);
+            RateLimiter::hit($ipKey, 300);
             throw ValidationException::withMessages(['login' => 'Usuario o contraseña de SIOS incorrectos.']);
         }
 

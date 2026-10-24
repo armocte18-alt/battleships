@@ -46,7 +46,7 @@ class ArcadeScoreController extends Controller
             'user_name' => $user->name,
             'score' => $data['score'],
             'duration' => $data['duration'],
-            'meta' => array_slice($data['meta'] ?? [], 0, 8, true),
+            'meta' => array_intersect_key($data['meta'] ?? [], array_flip($cfg['meta'] ?? [])),
             'created_at' => now(),
         ]);
 

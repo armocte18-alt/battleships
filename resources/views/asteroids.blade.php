@@ -40,7 +40,7 @@
 @endsection
 
 @push('scripts')
-    <script>
+    <script nonce="{{ $cspNonce }}">
         window.AST = {
             best: {{ $best }},
             leaderboard: @json($leaderboard),

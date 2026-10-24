@@ -104,6 +104,6 @@
 @endsection
 
 @push('scripts')
-    <script>window.BS_HUB = { battleships: @json(route('lobby')) };</script>
+    <script nonce="{{ $cspNonce }}">window.BS_HUB = { battleships: @json(route('lobby')) };</script>
     <script src="{{ asset('assets/js/hub.js') }}?v={{ filemtime(public_path('assets/js/hub.js')) }}"></script>
 @endpush

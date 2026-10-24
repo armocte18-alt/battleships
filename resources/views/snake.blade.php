@@ -66,7 +66,7 @@
 @endsection
 
 @push('scripts')
-    <script>
+    <script nonce="{{ $cspNonce }}">
         window.SNAKE = {
             modes: @json($modes),
             leaderboards: @json($leaderboards),

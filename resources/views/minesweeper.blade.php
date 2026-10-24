@@ -55,7 +55,7 @@
 @endsection
 
 @push('scripts')
-    <script>
+    <script nonce="{{ $cspNonce }}">
         window.MS = {
             levels: @json($levels),
             leaderboards: @json($leaderboards),

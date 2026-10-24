@@ -146,6 +146,52 @@ Apache debe poder escribir en `storage\` y `bootstrap\cache\` (sesiones, caché 
 
 **Puntos del ranking:** victoria contra un compañero = 3 · contra la CPU = 1 (Recluta), 2 (Capitán), 3 (Almirante).
 
+## 🔒 Seguridad (revisar antes de publicar en la oficina)
+
+Lo que ya trae el sitio:
+
+- **Credenciales de SIOS de solo lectura:** el juego nunca escribe en la base de SIOS (ni re-encripta contraseñas).
+- **Inicio de sesión protegido:** máx. 5 intentos por usuario+IP y 20 por IP cada 5 minutos; la sesión se regenera al entrar.
+  Si se usa `BATTLESHIPS_ALLOWED_ROLES`, el permiso se vuelve a verificar cada 10 minutos.
+- **CSRF** en todos los formularios y peticiones; cookies `HttpOnly` y `SameSite=Lax`.
+- **Content-Security-Policy** estricta (solo scripts propios con *nonce*, sin manejadores en línea), `X-Frame-Options`,
+  `nosniff`, `Referrer-Policy` y `Permissions-Policy`.
+- **XSS:** todo texto de usuarios (nombres, chat) se escapa; los datos que llegan de otros jugadores en Asteroides se
+  convierten a números antes de usarse.
+- **Permisos:** cada partida/sala valida que participes; solo el anfitrión inicia o cierra una sala de Asteroides;
+  solo se puede retar a jugadores conectados.
+- **Límites de uso** por usuario (navegación, chat, desafíos, creación de salas, envío de puntajes).
+- **Puntajes:** el servidor rechaza puntajes imposibles. Como los juegos de un jugador corren en el navegador, un usuario
+  con conocimientos técnicos podría enviar un puntaje inventado pero creíble; para un juego interno es aceptable.
+
+Lista de verificación al instalar:
+
+1. En `.env`: `APP_ENV=production`, `APP_DEBUG=false` y `APP_KEY` generado (`php artisan key:generate`).
+2. Para leer SIOS, usa un usuario de MySQL **solo con `SELECT`** sobre `sios_app_web.users` (y `roles`,
+   `model_has_roles` si usas roles):
+   ```sql
+   CREATE USER 'arcade_ro'@'localhost' IDENTIFIED BY 'una-contraseña-larga';
+   GRANT SELECT ON sios_app_web.users TO 'arcade_ro'@'localhost';
+   GRANT SELECT ON sios_app_web.roles TO 'arcade_ro'@'localhost';
+   GRANT SELECT ON sios_app_web.model_has_roles TO 'arcade_ro'@'localhost';
+   ```
+   y ponlo en `SIOS_DB_USERNAME` / `SIOS_DB_PASSWORD`. Para la base `battle_ships` usa otro usuario (no `root`).
+3. **Lo más seguro:** que Apache sirva solo la carpeta `public`. En `httpd.conf` (o `httpd-vhosts.conf`) de WAMP:
+   ```apache
+   Alias /battle_ships "C:/Servidor/www/battle_ships/public"
+   <Directory "C:/Servidor/www/battle_ships/public">
+       AllowOverride All
+       Require all granted
+   </Directory>
+   ```
+   Si no puedes editar Apache, el `.htaccess` de la raíz ya bloquea los archivos internos, **siempre que** Apache
+   tenga `mod_rewrite` y `AllowOverride All` para `C:\Servidor\www`.
+4. **Comprueba** desde otra PC que estas direcciones respondan *403* o *404* (nunca el contenido):
+   `http://SERVIDOR/battle_ships/.env`, `/battle_ships/composer.json`, `/battle_ships/storage/logs/laravel.log`,
+   `/battle_ships/vendor/autoload.php`.
+5. Opcional en Apache: `ServerTokens Prod` y `ServerSignature Off` para no anunciar la versión del servidor.
+6. Si el sitio se publica con HTTPS, agrega `SESSION_SECURE_COOKIE=true` al `.env`.
+
 ## Desarrollo
 
 ```bash

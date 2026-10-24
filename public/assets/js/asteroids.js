@@ -38,6 +38,11 @@
         return dx * dx + dy * dy;
     }
     const r1 = (n) => Math.round(n * 10) / 10;
+    // Los datos de otros navegadores no son de confianza: solo números finitos.
+    const num = (v, d = 0) => (Number.isFinite(+v) ? +v : d);
+    const cleanShip = (s) => (s && typeof s === 'object'
+        ? { x: wrapX(num(s.x)), y: wrapY(num(s.y)), vx: num(s.vx), vy: num(s.vy), a: num(s.a), th: s.th ? 1 : 0, al: s.al ? 1 : 0, inv: s.inv ? 1 : 0 }
+        : null);
 
     /* ---------------- Fondo ---------------- */
     const bg = document.createElement('canvas');
@@ -429,13 +434,17 @@
                 const d = data.peers[p.slot];
                 const peer = (peers[p.slot] ??= { shotsSeen: new Set() });
                 if (!d) { if (peer.at || now - t0 > 12000) world.present[p.slot] = false; continue; }
-                peer.age = d.age; peer.at = now; peer.ship = d.d.s;
+                peer.age = num(d.age); peer.at = now; peer.ship = cleanShip(d.d && d.d.s);
                 world.present[p.slot] = d.age < 6;
                 if (peer.ship && !peer.ship.al && world.deadUntil?.[p.slot]) world.deadUntil[p.slot] = 0;
-                for (const [id, x, y, vx, vy, age] of d.d.sh || []) {
+                for (const shot of (Array.isArray(d.d && d.d.sh) ? d.d.sh.slice(0, 12) : [])) {
+                    if (!Array.isArray(shot)) continue;
+                    const [id, x, y, vx, vy, age] = shot.map((v) => num(v));
                     if (peer.shotsSeen.has(id)) continue;
                     peer.shotsSeen.add(id);
-                    const late = Math.min(0.5, age + d.age);
+                    const late = Math.max(0, Math.min(0.5, age + num(d.age)));
+                    // Velocidad máxima creíble de una bala: descarta disparos fabricados.
+                    if (Math.hypot(vx, vy) > 1400) continue;
                     world.bullets.push({ id, o: p.slot, x: wrapX(x + vx * late), y: wrapY(y + vy * late), vx, vy, life: 0.95 - late });
                 }
             }
@@ -449,7 +458,8 @@
             }
             if (hostLostSince && now - hostLostSince > 8000 && ui === 'playing') {
                 ui = 'over'; snd.thrust(false);
-                showOverlay(`<h2>CONEXIÓN PERDIDA</h2><p>El anfitrión salió de la partida.</p><div class="actions"><button class="btn" onclick="location.reload()">Volver</button></div>`);
+                showOverlay(`<h2>CONEXIÓN PERDIDA</h2><p>El anfitrión salió de la partida.</p><div class="actions"><button class="btn" id="ast-back">Volver</button></div>`);
+                $('#ast-back').onclick = () => location.reload();
             }
         }
     }
@@ -735,11 +745,12 @@
         if (ui !== 'playing') return;
         ui = 'over'; snd.thrust(false); netToken++;
         const v = viewState(performance.now());
-        const myScore = v.scores[mySlot] || 0;
-        const rows = players.map((p) => ({ ...p, score: v.scores[p.slot] || 0 })).sort((a, b) => b.score - a.score);
+        const myScore = Math.max(0, Math.floor(num(v.scores[mySlot])));
+        const wave = Math.max(1, Math.floor(num(v.wave, 1)));
+        const rows = players.map((p) => ({ ...p, score: num(v.scores[p.slot]) })).sort((a, b) => b.score - a.score);
         if (isHost && room) BS.api('POST', `/asteroides/salas/${room.id}/terminar`).catch(() => {});
         showOverlay(`<h2>FIN DEL JUEGO</h2>
-            <p>Llegaron hasta la oleada <b>${v.wave || 1}</b>.</p>
+            <p>Llegaron hasta la oleada <b>${wave}</b>.</p>
             <table class="ast-results">${rows.map((p, i) => `<tr><td style="color:${p.color}">${i === 0 && rows.length > 1 ? '👑 ' : ''}${BS.esc(p.name)}${p.slot === mySlot ? ' (tú)' : ''}</td><td style="color:${p.color}">${p.score.toLocaleString('es-MX')}</td></tr>`).join('')}</table>
             <p id="go-msg">${myScore ? 'Guardando tu puntaje…' : '¡Suerte para la próxima!'}</p>
             <div class="actions"><button class="btn" id="ast-again" style="--c1:#ff3399;--c2:#8a1250">↻ Menú</button>
@@ -747,7 +758,7 @@
         $('#ast-again').onclick = menu;
         if (!myScore) return;
         try {
-            const r = await BS.api('POST', '/puntajes/asteroids', { mode: 'classic', score: myScore, duration: Math.max(1, Math.round((performance.now() - t0) / 1000)), meta: { wave: v.wave || 1, players: players.length } });
+            const r = await BS.api('POST', '/puntajes/asteroids', { mode: 'classic', score: myScore, duration: Math.max(1, Math.round((performance.now() - t0) / 1000)), meta: { wave, players: players.length } });
             renderRanking(r.leaderboard);
             const m = $('#go-msg');
             if (m) m.innerHTML = (r.new_best ? '<span class="new-best">★ ¡NUEVO RÉCORD PERSONAL! ★</span><br>' : '') + `Quedaste en el lugar <b>#${r.rank}</b> de los mejores pilotos.`;

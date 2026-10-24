@@ -17,7 +17,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'throttle:arcade'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Sala de juegos
@@ -34,13 +34,14 @@ Route::middleware('auth')->group(function () {
     // Asteroides (solo o salas de hasta 3 jugadores)
     Route::get('/asteroides', [AsteroidsController::class, 'index'])->name('asteroids');
     Route::get('/asteroides/salas', [AsteroidsController::class, 'rooms'])->name('asteroids.rooms');
-    Route::post('/asteroides/salas', [AsteroidsController::class, 'create'])->name('asteroids.create');
+    Route::post('/asteroides/salas', [AsteroidsController::class, 'create'])->middleware('throttle:rooms')->name('asteroids.create');
     Route::get('/asteroides/salas/{room}', [AsteroidsController::class, 'show'])->name('asteroids.show');
     Route::post('/asteroides/salas/{room}/unirse', [AsteroidsController::class, 'join'])->name('asteroids.join');
     Route::post('/asteroides/salas/{room}/salir', [AsteroidsController::class, 'leave'])->name('asteroids.leave');
     Route::post('/asteroides/salas/{room}/iniciar', [AsteroidsController::class, 'start'])->name('asteroids.start');
     Route::post('/asteroides/salas/{room}/terminar', [AsteroidsController::class, 'finish'])->name('asteroids.finish');
-    Route::post('/asteroides/salas/{room}/sync', [AsteroidsController::class, 'sync'])->name('asteroids.sync');
+    Route::post('/asteroides/salas/{room}/sync', [AsteroidsController::class, 'sync'])
+        ->withoutMiddleware('throttle:arcade')->middleware('throttle:sync')->name('asteroids.sync');
 
     // Serpiente
     Route::get('/serpiente', [SnakeController::class, 'index'])->name('snake');
@@ -55,7 +56,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/chat', [ChatController::class, 'store'])->name('chat.store');
 
     Route::post('/games/cpu', [GameController::class, 'createCpu'])->name('games.cpu');
-    Route::post('/games/invite', [GameController::class, 'invite'])->name('games.invite');
+    Route::post('/games/invite', [GameController::class, 'invite'])->middleware('throttle:invites')->name('games.invite');
     Route::get('/games/{game}', [GameController::class, 'show'])->name('games.show');
     Route::get('/games/{game}/state', [GameController::class, 'state'])->name('games.state');
     Route::post('/games/{game}/accept', [GameController::class, 'accept'])->name('games.accept');
@@ -64,5 +65,5 @@ Route::middleware('auth')->group(function () {
     Route::post('/games/{game}/fire', [GameController::class, 'fire'])->name('games.fire');
     Route::post('/games/{game}/forfeit', [GameController::class, 'forfeit'])->name('games.forfeit');
     Route::post('/games/{game}/claim', [GameController::class, 'claim'])->name('games.claim');
-    Route::post('/games/{game}/rematch', [GameController::class, 'rematch'])->name('games.rematch');
+    Route::post('/games/{game}/rematch', [GameController::class, 'rematch'])->middleware('throttle:invites')->name('games.rematch');
 });

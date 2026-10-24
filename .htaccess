@@ -1,19 +1,30 @@
-# Battleships SIOS · acceso sin /public (Apache con mod_rewrite)
+# SIOS Arcade · acceso sin /public (Apache 2.4 con mod_rewrite)
+#
+# Lo más seguro es apuntar Apache directamente a la carpeta public/ con un Alias
+# (ver README, sección "Seguridad"). Este archivo es la alternativa cuando eso no
+# es posible: solo deja pasar los recursos de public/assets y manda TODO lo demás
+# a Laravel, de modo que .env, vendor, storage, la base de datos, etc. nunca se sirven.
+
+Options -Indexes -MultiViews
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    # Nunca exponer archivos internos del proyecto.
-    RewriteRule ^(\.env.*|\.git.*|composer\.(json|lock)|artisan|app|bootstrap|config|database|resources|routes|storage|tests|vendor)(/.*)?$ - [F,L]
-
     # Recursos estáticos (css, js, imágenes) desde public/.
     RewriteRule ^public/ - [L]
-    RewriteRule ^(assets/.*|favicon\.ico|robots\.txt)$ public/$1 [L]
+    RewriteRule ^(assets/.+|favicon\.ico|robots\.txt)$ public/$1 [L]
 
-    # Todo lo demás lo atiende Laravel.
+    # Todo lo demás lo atiende Laravel (un archivo interno pedido por URL da 404).
     RewriteRule ^index\.php$ - [L]
     RewriteRule ^ index.php [L]
 </IfModule>
 
+# Sin mod_rewrite no se puede proteger la carpeta: se niega todo.
 <IfModule !mod_rewrite.c>
-    ErrorDocument 404 "Activa mod_rewrite en Apache o abre el juego en /battle_ships/public"
+    Require all denied
 </IfModule>
+
+# Segunda barrera: archivos sensibles nunca se entregan, aunque falle lo anterior.
+<FilesMatch "(^\.|^artisan$|^composer\.(json|lock)$|^phpunit\.xml$|\.(env|log|sqlite|sql|md|yml|yaml|lock|bak|dist)$)">
+    Require all denied
+</FilesMatch>

@@ -46,7 +46,7 @@
 @endsection
 
 @push('scripts')
-    <script>
+    <script nonce="{{ $cspNonce }}">
         window.BS_GAME = {
             id: {{ $game->id }},
             fleet: @json(collect(config('battleships.fleet'))->map(fn ($s, $k) => ['type' => $k] + $s)->values()),
