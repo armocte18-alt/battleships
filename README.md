@@ -7,6 +7,8 @@ Sala de juegos para los usuarios de **SIOS**, hecha en Laravel 13. Al entrar, ca
 | ⚓ **Battleships** | 1 o 2 jugadores (contra la CPU o contra un compañero), con chat | `/battleships` |
 | 🟡 **Pac-Man** | 1 jugador, salón de la fama con los mejores puntajes | `/pacman` |
 | 💣 **Buscaminas** | 1 jugador, 3 dificultades con récords de tiempo | `/buscaminas` |
+| ☄️ **Asteroides** | 1 a 3 jugadores en equipo (cada quien en su PC) | `/asteroides` |
+| 🐍 **Serpiente** | 1 jugador, modos Clásico y Sin bordes | `/serpiente` |
 
 La sala (`/`) muestra las tarjetas de los juegos con tus estadísticas, los jugadores en línea (a los que puedes retar
 a Battleships con un clic) y un chat general. Los desafíos de Battleships te llegan estés donde estés.
@@ -22,6 +24,24 @@ a Battleships con un clic) y un chat general. Los desafíos de Battleships te ll
 - Frutas (🍒 100 → 🔑 5000), combos de fantasmas (200 → 1600), vida extra a los 10,000 puntos y niveles cada vez más rápidos.
 - Controles: flechas o WASD, <kbd>P</kbd> para pausar; en celular, deslizar el dedo o la cruceta en pantalla.
 - Al terminar se guarda el puntaje y se muestra tu lugar en el salón de la fama (el servidor rechaza puntajes imposibles).
+
+## ☄️ Asteroides (1 a 3 jugadores)
+
+- Gráficos vectoriales de neón: naves de colores por jugador, asteroides con cráteres, platillo volador, estelas y explosiones.
+- **Solo** o en **sala cooperativa**: un jugador crea la sala (se avisa en el chat general), hasta dos compañeros se unen
+  desde la lista de salas abiertas y el anfitrión pulsa *¡Despegar!*. Todos combaten juntos; cada quien suma su puntaje.
+- Controles: ← → girar, ↑ impulso, Espacio disparar (mantener = ráfaga), ↓/H hiperespacio. En pantallas táctiles hay botones.
+- Cada jugador tiene 3 vidas (+1 cada 10,000 puntos); la partida termina cuando el escuadrón completo se queda sin vidas.
+- **Cómo funciona en red:** el navegador del anfitrión simula el mundo y cada piloto controla su nave en su propia PC
+  (sin retraso al mover o disparar). Los navegadores intercambian su estado ~10 veces por segundo a través de
+  `/asteroides/salas/{id}/sync`, que solo lo retransmite usando la caché de Laravel (no requiere websockets).
+  Con 3 jugadores son ~30 peticiones por segundo muy ligeras; Apache las atiende sin problema en la red de la oficina.
+
+## 🐍 Serpiente
+
+- Movimiento fluido (interpolado), cuerpo de neón con degradado, ojos y lengua, partículas al comer.
+- Modos **Clásico** (los bordes son muros) y **Sin bordes** (atraviesas de un lado al otro); récords separados por modo.
+- Power-ups: ⭐ estrella (+50), ×2 puntos dobles, ❄ cámara lenta; aparecen rocas conforme creces y la velocidad aumenta.
 
 ## 💣 Buscaminas
 
@@ -139,9 +159,10 @@ Estructura principal:
 - `app/Services/CpuPlayer.php` — IA de la CPU (aleatoria, caza y blanco, mapa de probabilidad).
 - `app/Services/Fleet.php` — flota, validación y colocación aleatoria.
 - `app/Models/SiosUser.php` — usuarios de SIOS (conexión `sios`, solo lectura).
-- `config/arcade.php` — catálogo de juegos de la sala.
+- `config/arcade.php` — catálogo de juegos de la sala y reglas de puntajes.
+- `app/Http/Controllers/AsteroidsController.php` — salas y relevo en tiempo real de Asteroides · `ArcadeScoreController.php` — puntajes de Asteroides y Serpiente.
 - `app/Http/Controllers/HubController.php` / `PacmanController.php` — sala de juegos y puntajes de Pac-Man.
-- `public/assets/js/core.js` — sonido, partículas, barcos SVG, chat y desafíos · `hub.js` — la sala · `pacman.js` — Pac-Man · `minesweeper.js` — Buscaminas · `game.js` — partida de Battleships · `lobby.js` — el puerto.
+- `public/assets/js/core.js` — sonido, partículas, barcos SVG, chat y desafíos · `hub.js` — la sala · `pacman.js` — Pac-Man · `minesweeper.js` — Buscaminas · `asteroids.js` — Asteroides · `snake.js` — Serpiente · `game.js` — partida de Battleships · `lobby.js` — el puerto.
 
 La comunicación en tiempo real se hace con consultas periódicas (cada ~1 s en partida), suficiente para la red de la
 oficina y sin instalar servidores extra.

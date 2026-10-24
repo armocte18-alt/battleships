@@ -43,6 +43,25 @@
                                     <span class="{{ $c === ' ' ? 'o' : ($c === 'F' ? 'f' : 'n n'.$c) }}">{{ $c === 'F' ? '' : trim($c) }}</span>
                                 @endforeach
                             </div>
+                        @elseif ($key === 'asteroids')
+                            <div class="art-space">
+                                <svg viewBox="0 0 400 190" preserveAspectRatio="xMidYMid slice">
+                                    <g fill="none" stroke-width="2.5" stroke-linejoin="round">
+                                        <path class="rock r1" d="M60 40 l30 -12 l28 10 l6 28 l-18 24 l-30 2 l-20 -20 z" stroke="#c4b5fd"/>
+                                        <path class="rock r2" d="M300 120 l20 -10 l22 8 l2 22 l-16 14 l-24 -4 l-8 -16 z" stroke="#c4b5fd"/>
+                                        <path class="rock r3" d="M330 30 l12 -4 l10 8 l-2 12 l-12 4 l-10 -8 z" stroke="#c4b5fd"/>
+                                        <g class="ship-a"><path d="M0 -14 L10 12 L0 6 L-10 12 Z" stroke="#3ff2ff" fill="rgba(63,242,255,.15)"/></g>
+                                        <g class="ship-b"><path d="M0 -14 L10 12 L0 6 L-10 12 Z" stroke="#ff3399" fill="rgba(255,51,153,.15)"/></g>
+                                        <g class="ship-c"><path d="M0 -14 L10 12 L0 6 L-10 12 Z" stroke="#ffc23d" fill="rgba(255,194,61,.15)"/></g>
+                                    </g>
+                                    <circle class="bolt" r="3" fill="#3ff2ff"/>
+                                </svg>
+                            </div>
+                        @elseif ($key === 'snake')
+                            <div class="art-snakebox">
+                                <div class="snake-body">@for ($i = 0; $i < 9; $i++)<i style="--i: {{ $i }}"></i>@endfor</div>
+                                <span class="apple"></span>
+                            </div>
                         @else
                             <div class="art-soon">?</div>
                         @endif

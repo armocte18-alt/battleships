@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ArcadeScore;
 use App\Models\Game;
 use App\Models\MinesweeperScore;
 use App\Models\PacmanScore;
@@ -33,6 +34,15 @@ class HubController extends Controller
                 ['label' => 'Tu mejor · Intermedio', 'value' => $this->seconds(MinesweeperScore::bestOf($me, 'medium'))],
             ],
         ];
+
+        foreach (['asteroids', 'snake'] as $game) {
+            $top = collect(array_keys(config("arcade.scores.$game.modes")))
+                ->map(fn ($m) => ArcadeScore::leaderboard($game, $m, 1)[0] ?? null)->filter()->sortByDesc('score')->first();
+            $stats[$game] = [
+                ['label' => 'Tu mejor', 'value' => number_format(ArcadeScore::bestOf($me, $game))],
+                ['label' => 'Récord', 'value' => $top ? number_format($top['score']) : '—', 'hint' => $top['name'] ?? null],
+            ];
+        }
 
         return view('hub', [
             'games' => config('arcade.games'),

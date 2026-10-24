@@ -37,6 +37,26 @@ return [
             'accent' => '#a78bfa',
             'enabled' => true,
         ],
+        'asteroids' => [
+            'name' => 'Asteroides',
+            'tagline' => 'Arcade espacial',
+            'description' => 'Pilota tu nave y pulveriza asteroides. Juega solo o en equipo con hasta dos compañeros.',
+            'route' => 'asteroids',
+            'players' => '1–3 jugadores',
+            'tags' => ['Acción', 'Cooperativo', 'Récords'],
+            'accent' => '#ff3399',
+            'enabled' => true,
+        ],
+        'snake' => [
+            'name' => 'Serpiente',
+            'tagline' => 'Arcade',
+            'description' => 'Come, crece y no choques. Power-ups, dos modos de juego y récords de la oficina.',
+            'route' => 'snake',
+            'players' => '1 jugador',
+            'tags' => ['Arcade', 'Reflejos', 'Récords'],
+            'accent' => '#3dffa0',
+            'enabled' => true,
+        ],
         'tetris' => [
             'name' => 'Bloques',
             'tagline' => 'Puzzle',
@@ -47,16 +67,21 @@ return [
             'accent' => '#c23a6f',
             'enabled' => false,
         ],
-        'snake' => [
-            'name' => 'Serpiente',
-            'tagline' => 'Arcade',
-            'description' => 'Crece sin chocar contigo mismo.',
-            'route' => null,
-            'players' => '1 jugador',
-            'tags' => ['Arcade'],
-            'accent' => '#3dffa0',
-            'enabled' => false,
-        ],
+    ],
+
+    /*
+     * Juegos que guardan su puntaje en la tabla genérica arcade_scores.
+     * max_per_second limita puntajes imposibles según el tiempo jugado.
+     */
+    'scores' => [
+        'asteroids' => ['modes' => ['classic' => 'Clásico'], 'max_per_second' => 600, 'max' => 9999990],
+        'snake' => ['modes' => ['classic' => 'Clásico', 'wrap' => 'Sin bordes'], 'max_per_second' => 120, 'max' => 999990],
+    ],
+
+    // Salas de Asteroides
+    'asteroids' => [
+        'max_players' => 3,
+        'room_idle_seconds' => 45, // una sala sin actividad deja de listarse
     ],
 
     'minesweeper' => [

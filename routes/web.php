@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ArcadeScoreController;
+use App\Http\Controllers\AsteroidsController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\GameController;
@@ -7,6 +9,7 @@ use App\Http\Controllers\HubController;
 use App\Http\Controllers\LobbyController;
 use App\Http\Controllers\MinesweeperController;
 use App\Http\Controllers\PacmanController;
+use App\Http\Controllers\SnakeController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -27,6 +30,23 @@ Route::middleware('auth')->group(function () {
     // Buscaminas
     Route::get('/buscaminas', [MinesweeperController::class, 'index'])->name('minesweeper');
     Route::post('/buscaminas/scores', [MinesweeperController::class, 'store'])->name('minesweeper.scores');
+
+    // Asteroides (solo o salas de hasta 3 jugadores)
+    Route::get('/asteroides', [AsteroidsController::class, 'index'])->name('asteroids');
+    Route::get('/asteroides/salas', [AsteroidsController::class, 'rooms'])->name('asteroids.rooms');
+    Route::post('/asteroides/salas', [AsteroidsController::class, 'create'])->name('asteroids.create');
+    Route::get('/asteroides/salas/{room}', [AsteroidsController::class, 'show'])->name('asteroids.show');
+    Route::post('/asteroides/salas/{room}/unirse', [AsteroidsController::class, 'join'])->name('asteroids.join');
+    Route::post('/asteroides/salas/{room}/salir', [AsteroidsController::class, 'leave'])->name('asteroids.leave');
+    Route::post('/asteroides/salas/{room}/iniciar', [AsteroidsController::class, 'start'])->name('asteroids.start');
+    Route::post('/asteroides/salas/{room}/terminar', [AsteroidsController::class, 'finish'])->name('asteroids.finish');
+    Route::post('/asteroides/salas/{room}/sync', [AsteroidsController::class, 'sync'])->name('asteroids.sync');
+
+    // Serpiente
+    Route::get('/serpiente', [SnakeController::class, 'index'])->name('snake');
+
+    // Puntajes genéricos (Asteroides, Serpiente)
+    Route::post('/puntajes/{game}', [ArcadeScoreController::class, 'store'])->name('arcade.scores');
 
     // Battleships
     Route::get('/battleships', [LobbyController::class, 'index'])->name('lobby');
