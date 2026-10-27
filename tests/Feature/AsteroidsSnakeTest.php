@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\ArcadeRoom;
 use App\Models\ArcadeScore;
-use App\Models\AsteroidRoom;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -51,7 +51,7 @@ class AsteroidsSnakeTest extends TestCase
         $this->assertArrayNotHasKey(2, $guest['peers']);
 
         $this->actingAs($ana)->postJson("/asteroides/salas/{$room['id']}/terminar")->assertOk();
-        $this->assertSame('finished', AsteroidRoom::find($room['id'])->status);
+        $this->assertSame('finished', ArcadeRoom::find($room['id'])->status);
     }
 
     public function test_host_leaving_a_waiting_room_closes_it(): void
@@ -59,7 +59,7 @@ class AsteroidsSnakeTest extends TestCase
         $ana = $this->siosUser('ana');
         $room = $this->actingAs($ana)->postJson('/asteroides/salas')->json();
         $this->actingAs($ana)->postJson("/asteroides/salas/{$room['id']}/salir")->assertOk();
-        $this->assertSame('finished', AsteroidRoom::find($room['id'])->status);
+        $this->assertSame('finished', ArcadeRoom::find($room['id'])->status);
     }
 
     public function test_generic_scores_for_asteroids_and_snake(): void

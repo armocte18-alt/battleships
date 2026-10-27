@@ -57,6 +57,11 @@
                                     <circle class="bolt" r="3" fill="#3ff2ff"/>
                                 </svg>
                             </div>
+                        @elseif ($key === 'pong')
+                            <div class="art-pong">
+                                <span class="pad l"></span><span class="pad r"></span>
+                                <span class="net"></span><span class="ball"></span>
+                            </div>
                         @elseif ($key === 'snake')
                             <div class="art-snakebox">
                                 <div class="snake-body">@for ($i = 0; $i < 9; $i++)<i style="--i: {{ $i }}"></i>@endfor</div>

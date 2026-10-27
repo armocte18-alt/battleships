@@ -698,3 +698,30 @@ button { font-family: inherit; }
 .ast-touch button.on { background: rgba(255, 51, 153, .45); }
 @media (hover: none) { .ast-touch { display: grid; } }
 @media (max-width: 760px) { .ast-slots { grid-template-columns: 1fr; } .ast-slot { min-height: 0; padding: 10px; } }
+
+/* ==========================================================================
+   PING PONG
+   ========================================================================== */
+.pong-screen { border-color: rgba(255, 194, 61, .55); box-shadow: 0 0 0 6px #120c02, 0 0 60px -10px rgba(255, 194, 61, .5), inset 0 0 40px rgba(63, 242, 255, .12); }
+#pong-canvas { display: block; width: min(1000px, calc(100vw - 64px), calc((100vh - 200px) * 1.7778)); height: auto; aspect-ratio: 16 / 9; border-radius: 6px; touch-action: none; background: #040814; cursor: none; }
+.arcade-pong .ranking td.pts { color: #ffc23d; }
+.arcade-pong .ast-menu h2 { background: linear-gradient(180deg, #fff, #ffd77a 55%, #ff9a1a); -webkit-background-clip: text; background-clip: text; }
+.arcade-pong .ast-slots { grid-template-columns: repeat(2, 1fr); max-width: 440px; }
+.pong-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; width: 100%; }
+.pong-card { padding: 16px; border-radius: 16px; background: rgba(255, 255, 255, .05); border: 1px solid var(--panel-border); display: grid; gap: 12px; align-content: start; text-align: left; }
+.pong-card h3 { margin: 0; font-family: var(--font-title); letter-spacing: 1px; font-size: 18px; color: #fff; }
+.pong-card .ms-levels { width: 100%; }
+.pong-card .ms-levels button { flex: 1; }
+.pong-card .ms-levels button.on { background: linear-gradient(135deg, #ffc23d, #d17a00); color: #04121f; box-shadow: 0 6px 18px -6px #ffc23d; }
+@media (max-width: 760px) { .pong-modes { grid-template-columns: 1fr; } }
+
+/* Tarjeta en la sala */
+.art-pong { position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, rgba(255, 194, 61, .14), transparent 60%), #040814; }
+.art-pong .net { position: absolute; left: 50%; top: 12px; bottom: 12px; border-left: 3px dashed rgba(255, 255, 255, .25); }
+.art-pong .pad { position: absolute; top: 60px; width: 10px; height: 64px; border-radius: 6px; animation: padMove 2.4s ease-in-out infinite; }
+.art-pong .pad.l { left: 34px; background: #3ff2ff; box-shadow: 0 0 16px #3ff2ff; }
+.art-pong .pad.r { right: 34px; background: #ff3399; box-shadow: 0 0 16px #ff3399; animation-delay: -1.2s; }
+@keyframes padMove { 0%, 100% { transform: translateY(-40px); } 50% { transform: translateY(40px); } }
+.art-pong .ball { position: absolute; width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 0 16px #ffc23d, 0 0 30px #ffc23d; animation: pongX 2.4s linear infinite, pongY 1.1s ease-in-out infinite alternate; }
+@keyframes pongX { 0%, 100% { left: 46px; } 50% { left: calc(100% - 60px); } }
+@keyframes pongY { from { top: 30px; } to { top: 146px; } }

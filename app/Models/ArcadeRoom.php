@@ -4,7 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class AsteroidRoom extends Model
+/**
+ * Sala de juego en tiempo real (Asteroides, Ping Pong).
+ */
+class ArcadeRoom extends Model
 {
     protected $guarded = [];
 
@@ -26,6 +29,7 @@ class AsteroidRoom extends Model
     {
         return [
             'id' => $this->id,
+            'game' => $this->game,
             'status' => $this->status,
             'host_id' => (int) $this->host_id,
             'seed' => (int) $this->seed,

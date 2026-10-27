@@ -26,8 +26,8 @@ class AppServiceProvider extends ServiceProvider
 
         // Uso normal del sitio (páginas y consultas periódicas).
         RateLimiter::for('arcade', fn (Request $r) => Limit::perMinute(300)->by('arcade:'.$key($r)));
-        // Relevo en tiempo real de Asteroides (~10 por segundo por jugador).
-        RateLimiter::for('sync', fn (Request $r) => Limit::perMinute(1200)->by('sync:'.$key($r)));
+        // Relevo en tiempo real (Asteroides ~10/s, Ping Pong ~20/s por jugador).
+        RateLimiter::for('sync', fn (Request $r) => Limit::perMinute(1800)->by('sync:'.$key($r)));
         // Acciones que generan avisos a otros usuarios.
         RateLimiter::for('invites', fn (Request $r) => Limit::perMinute(6)->by('invites:'.$key($r)));
         RateLimiter::for('rooms', fn (Request $r) => Limit::perMinute(4)->by('rooms:'.$key($r)));

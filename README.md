@@ -8,6 +8,7 @@ Sala de juegos para los usuarios de **SIOS**, hecha en Laravel 13. Al entrar, ca
 | 🟡 **Pac-Man** | 1 jugador, salón de la fama con los mejores puntajes | `/pacman` |
 | 💣 **Buscaminas** | 1 jugador, 3 dificultades con récords de tiempo | `/buscaminas` |
 | ☄️ **Asteroides** | 1 a 3 jugadores en equipo (cada quien en su PC) | `/asteroides` |
+| 🏓 **Ping Pong** | contra la CPU (3 dificultades) o contra un compañero, cada quien en su PC | `/pingpong` |
 | 🐍 **Serpiente** | 1 jugador, modos Clásico y Sin bordes | `/serpiente` |
 
 La sala (`/`) muestra las tarjetas de los juegos con tus estadísticas, los jugadores en línea (a los que puedes retar
@@ -36,6 +37,18 @@ a Battleships con un clic) y un chat general. Los desafíos de Battleships te ll
   (sin retraso al mover o disparar). Los navegadores intercambian su estado ~10 veces por segundo a través de
   `/asteroides/salas/{id}/sync`, que solo lo retransmite usando la caché de Laravel (no requiere websockets).
   Con 3 jugadores son ~30 peticiones por segundo muy ligeras; Apache las atiende sin problema en la red de la oficina.
+
+## 🏓 Ping Pong
+
+- Mesa de neón con paletas brillantes, estela de la pelota que cambia de color con la velocidad, chispas y sacudida en cada punto.
+- **Contra la CPU** en Fácil, Normal o Difícil, o **contra un compañero**: uno abre una mesa (se avisa en el chat
+  general), el otro se une desde la lista y el anfitrión pulsa *¡A jugar!*. Gana quien llegue primero a 7 puntos.
+- Se juega con el mouse (o arrastrando el dedo) o con W/S y flechas. Pegar con la orilla da más ángulo y mover la
+  paleta al golpear le da efecto; la pelota acelera en cada golpe.
+- **En línea:** la pelota la decide la PC del jugador hacia quien va (golpe o punto), así cada quien juega con su
+  paleta real sin retraso; los navegadores se sincronizan ~20 veces por segundo por las mismas salas que Asteroides.
+- Ranking por victorias: CPU fácil 1 punto, normal 2, difícil 3 y contra un compañero 4. Una partida en línea solo
+  cuenta si ambos estaban en la misma mesa, y una sola vez.
 
 ## 🐍 Serpiente
 
@@ -208,7 +221,7 @@ Estructura principal:
 - `config/arcade.php` — catálogo de juegos de la sala y reglas de puntajes.
 - `app/Http/Controllers/AsteroidsController.php` — salas y relevo en tiempo real de Asteroides · `ArcadeScoreController.php` — puntajes de Asteroides y Serpiente.
 - `app/Http/Controllers/HubController.php` / `PacmanController.php` — sala de juegos y puntajes de Pac-Man.
-- `public/assets/js/core.js` — sonido, partículas, barcos SVG, chat y desafíos · `hub.js` — la sala · `pacman.js` — Pac-Man · `minesweeper.js` — Buscaminas · `asteroids.js` — Asteroides · `snake.js` — Serpiente · `game.js` — partida de Battleships · `lobby.js` — el puerto.
+- `public/assets/js/core.js` — sonido, partículas, barcos SVG, chat y desafíos · `hub.js` — la sala · `pacman.js` — Pac-Man · `minesweeper.js` — Buscaminas · `asteroids.js` — Asteroides · `snake.js` — Serpiente · `pong.js` — Ping Pong · `game.js` — partida de Battleships · `lobby.js` — el puerto.
 
 La comunicación en tiempo real se hace con consultas periódicas (cada ~1 s en partida), suficiente para la red de la
 oficina y sin instalar servidores extra.

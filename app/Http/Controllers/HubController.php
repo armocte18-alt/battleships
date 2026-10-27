@@ -44,6 +44,13 @@ class HubController extends Controller
             ];
         }
 
+        $pong = collect(PongController::leaderboard(null));
+        $mine = $pong->firstWhere('user_id', $me);
+        $stats['pong'] = [
+            ['label' => 'Victorias', 'value' => $mine['wins'] ?? 0],
+            ['label' => 'Campeón', 'value' => $pong->first()['name'] ?? '—'],
+        ];
+
         return view('hub', [
             'games' => config('arcade.games'),
             'stats' => $stats,

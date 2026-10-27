@@ -9,6 +9,7 @@ use App\Http\Controllers\HubController;
 use App\Http\Controllers\LobbyController;
 use App\Http\Controllers\MinesweeperController;
 use App\Http\Controllers\PacmanController;
+use App\Http\Controllers\PongController;
 use App\Http\Controllers\SnakeController;
 use Illuminate\Support\Facades\Route;
 
@@ -42,6 +43,19 @@ Route::middleware(['auth', 'throttle:arcade'])->group(function () {
     Route::post('/asteroides/salas/{room}/terminar', [AsteroidsController::class, 'finish'])->name('asteroids.finish');
     Route::post('/asteroides/salas/{room}/sync', [AsteroidsController::class, 'sync'])
         ->withoutMiddleware('throttle:arcade')->middleware('throttle:sync')->name('asteroids.sync');
+
+    // Ping Pong (contra la CPU o en línea contra otro usuario)
+    Route::get('/pingpong', [PongController::class, 'index'])->name('pong');
+    Route::post('/pingpong/resultados', [PongController::class, 'store'])->name('pong.results');
+    Route::get('/pingpong/salas', [PongController::class, 'rooms'])->name('pong.rooms');
+    Route::post('/pingpong/salas', [PongController::class, 'create'])->middleware('throttle:rooms')->name('pong.create');
+    Route::get('/pingpong/salas/{room}', [PongController::class, 'show'])->name('pong.show');
+    Route::post('/pingpong/salas/{room}/unirse', [PongController::class, 'join'])->name('pong.join');
+    Route::post('/pingpong/salas/{room}/salir', [PongController::class, 'leave'])->name('pong.leave');
+    Route::post('/pingpong/salas/{room}/iniciar', [PongController::class, 'start'])->name('pong.start');
+    Route::post('/pingpong/salas/{room}/terminar', [PongController::class, 'finish'])->name('pong.finish');
+    Route::post('/pingpong/salas/{room}/sync', [PongController::class, 'sync'])
+        ->withoutMiddleware('throttle:arcade')->middleware('throttle:sync')->name('pong.sync');
 
     // Serpiente
     Route::get('/serpiente', [SnakeController::class, 'index'])->name('snake');

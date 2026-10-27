@@ -47,6 +47,16 @@ return [
             'accent' => '#ff3399',
             'enabled' => true,
         ],
+        'pong' => [
+            'name' => 'Ping Pong',
+            'tagline' => 'Duelo arcade',
+            'description' => 'El clásico de las paletas con efectos de neón. Reta a la CPU o a un compañero desde su propia PC.',
+            'route' => 'pong',
+            'players' => '1–2 jugadores',
+            'tags' => ['Duelo', 'Multijugador', 'Reflejos'],
+            'accent' => '#ffc23d',
+            'enabled' => true,
+        ],
         'snake' => [
             'name' => 'Serpiente',
             'tagline' => 'Arcade',
@@ -78,10 +88,19 @@ return [
         'snake' => ['modes' => ['classic' => 'Clásico', 'wrap' => 'Sin bordes'], 'max_per_second' => 120, 'max' => 999990, 'meta' => ['length']],
     ],
 
-    // Salas de Asteroides
+    // Salas en tiempo real (Asteroides, Ping Pong)
+    'rooms' => [
+        'idle_seconds' => 45, // una sala sin actividad deja de listarse
+    ],
+
     'asteroids' => [
         'max_players' => 3,
-        'room_idle_seconds' => 45, // una sala sin actividad deja de listarse
+    ],
+
+    'pong' => [
+        'points_to_win' => 7,
+        // Puntos del ranking por victoria según el rival.
+        'ranking_points' => ['cpu_easy' => 1, 'cpu_normal' => 2, 'cpu_hard' => 3, 'pvp' => 4],
     ],
 
     'minesweeper' => [
