@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Http\Middleware\SessionCookiePath;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
 use Tests\TestCase;
 
 class SecurityTest extends TestCase
@@ -65,5 +67,17 @@ class SecurityTest extends TestCase
         $this->getJson('/lobby/poll')->assertUnauthorized();
         $this->postJson('/puntajes/snake', [])->assertUnauthorized();
         $this->get('/asteroides')->assertRedirect('/login');
+    }
+
+    public function test_session_cookie_path_follows_the_folder_the_site_is_opened_from(): void
+    {
+        foreach (['/battle_ships' => '/battle_ships', '/Battle_Ships' => '/Battle_Ships', '/battle_ships/public' => '/battle_ships/public', '' => '/'] as $base => $expected) {
+            $request = Request::create("http://servidor$base/login", 'GET', server: [
+                'SCRIPT_NAME' => "$base/index.php",
+                'SCRIPT_FILENAME' => '/var/www/index.php',
+            ]);
+            (new SessionCookiePath)->handle($request, fn () => response('ok'));
+            $this->assertSame($expected, config('session.path'), "base $base");
+        }
     }
 }
